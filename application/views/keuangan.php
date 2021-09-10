@@ -5,59 +5,48 @@
             <div class="col-12 mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Data Arisan</h4><br>
-                        <button type="button" class="btn btn-sm btn-flat btn-success mb-3" title="Detail" data-toggle="modal" data-target=".bd-example-modal-lg-tambah">Tambah Data</button>
-
-                        <div class="data-tables datatable-dark">
-                            <table id="table_data_arisan" class="text-center">
-                                <thead class="text-capitalize">
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nama</th>
-                                        <th scope="col">Tanggal Pembukaan</th>
-                                        <th scope="col">Pembayaran</th>
-                                        <th scope="col">Total Pembayaran</th>
-                                        <th scope="col">Potongan</th>
-                                        <th scope="col">Type Penerimaan</th>
-                                        <th scope="col">Total Penerimaan</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php 
-                                    $i=1;
-                                        foreach ($data_arisan as $key => $value) {
-                                    ?>       
-                                    <tr>
-                                        <th scope="row"> <?= $i++ ?></th>
-                                        <td><?= $value['nama']?></td>
-                                        <td><?=  date('d/m/Y', strtotime($value['tanggal_pembukaan'])) ;?></td>
-                                        <td>Rp. <?= number_format($value['pembayaran'],0,',','.');?></td>
-                                        <td>Rp. <?= number_format($value['total_pembayaran'],0,',','.');?></td>
-                                        <td>Rp. <?= number_format($value['potongan'],0,',','.');?></td>
-                                        <td>
-                                            <?php 
-                                                if ($value['type_penerimaan'] == 1) {
-                                                echo 'Atas bawah';
-                                                } else {
-                                                    echo 'Tengah'; 
-                                                } 
-                                            ?>
-                                        </td>
-                                        <td>Rp. <?= number_format($value['total_penerimaan'],0,',','.');?></td>
-
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-flat btn-success mb-3" title="Bayar" data-toggle="modal" data-target=".bd-example-modal-lg-bayar"><i class="fa fa-money"></i></button>
-                                            <button type="button" class="btn btn-sm btn-flat btn-warning mb-3" title="Detail" data-toggle="modal" data-target=".bd-example-modal-lg-detail"><i class="fa fa-info-circle"></i></button>
-                                            <button type="button" class="btn btn-sm btn-flat btn-primary mb-3" title="Edit" data-toggle="modal" data-target=".bd-example-modal-lg-edit"><i class="fa fa-edit"></i></button>
-                                            <button type="button" class="btn btn-sm btn-flat btn-danger  mb-3" title="Hapus" data-toggle="modal" data-target=".bd-example-modal-lg-hapus"><i class="fa fa-trash-o"></i></button>
-                                        </td>
-                                    </tr>
-                                    <?php } ?>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
+                        <h4 class="header-title">Keuangan</h4><br>
+                        <div class="row">
+                            <div class="col-xl-6 col-ml-6 col-mdl-6 col-sm-6 mt-5">
+                                <div class="card">
+                                    <div class="pricing-list dark-pricing">
+                                        <div class="prc-head">
+                                            <h4>Uang Untung</h4>
+                                        </div>
+                                        <div class="prc-list">
+                                            <H2>Rp. <?= number_format($uang_untung[0]['uang_untung'],0,',','.');?></H2>
+                                            <a href="#">Ambil</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-ml-6 col-mdl-6 col-sm-6 mt-5">
+                                <div class="card">
+                                    <div class="pricing-list dark-pricing">
+                                        <div class="prc-head">
+                                            <h4>Uang Arisan</h4>
+                                        </div>
+                                        <div class="prc-list">
+                                            <H2>Rp. <?= number_format($uang_arisan[0]['uang_arisan'],0,',','.') ?></H2>
+                                            <a href="<?php echo base_url() ?>C_keuangan/detail_uang_arisan">Detail</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-ml-12 col-mdl-12 col-sm-12 mt-5">
+                                <div class="card">
+                                    <div class="pricing-list dark-pricing">
+                                        <div class="prc-head">
+                                            <h4>Total Uang</h4>
+                                        </div>
+                                        <div class="prc-list">
+                                        <?php $total_uang = $uang_arisan[0]['uang_arisan'] + $uang_untung[0]['uang_untung'];?>
+                                            <H2>Rp. <?= number_format($total_uang,0,',','.') ?></H2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
                     </div>
                 </div>
             </div>
