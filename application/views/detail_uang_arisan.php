@@ -5,13 +5,11 @@
             <div class="col-12 mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Detail Harian</h4>
-                        <h4 class="header-title">Detail Bulanan</h4>
-                        <h4 class="header-title">Detail Tahunan</h4>
+                        <h4 class="header-title">Detail Harian</h4>  
                         <br>
 
                         <div class="data-tables datatable-dark">
-                            <table id="table_data_arisan" class="text-center">
+                            <table id="table_data_arisan" class="text-center table_data_arisan">
                                 <thead class="text-capitalize">
                                     <tr>
                                         <th scope="col">#</th>
@@ -30,6 +28,93 @@
                                         <th scope="row"> <?= $i++ ?></th>
                                         <td><?= $value['pembayaran_tanggal']?></td>
                                         <td>Rp. <?= number_format($value['uang_masuk'],0,',','.');?></td>
+                                        <td>Rp. <?= number_format($value['uang_keluar'],0,',','.');?></td>
+                                        <td>Rp. <?php
+                                            $tot = $value['uang_masuk'] - $value['uang_keluar'] ;
+                                            echo number_format($tot,0,',','.');
+                                        ?></td>
+                                        
+                                     
+                                        
+                                    </tr>
+                                    <?php } ?>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title">Detail Bulanan</h4>   
+                        <br>
+
+                        <div class="data-tables datatable-dark">
+                            <table id="table_data_arisan" class="text-center table_data_arisan">
+                                <thead class="text-capitalize">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Bulan</th>
+                                        <th scope="col">Uang Masuk</th>
+                                        <th scope="col">Uang Keluar</th>
+                                        <th scope="col">Total Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $i=1;
+                                        foreach ($bulanan as $key => $value) {
+                                    ?>       
+                                    <tr>
+                                        <th scope="row"> <?= $i++ ?></th>
+                                        <td><?= $value['pembayaran_tanggal']?></td>
+                                        <td>Rp. <?= number_format($value['uang_masuk'],0,',','.');?></td>
+                                        <td>Rp. <?= number_format($value['uang_keluar'],0,',','.');?></td>
+                                        <td>Rp. <?php
+                                            $tot = $value['uang_masuk'] - $value['uang_keluar'] ;
+                                            echo number_format($tot,0,',','.');
+                                        ?></td>
+                                        
+                                     
+                                        
+                                    </tr>
+                                    <?php } ?>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title">Detail Tahunan</h4>    
+                        <br>
+
+                        <div class="data-tables datatable-dark">
+                            <table id="table_data_arisan" class="text-center table_data_arisan">
+                                <thead class="text-capitalize">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Tahun</th>
+                                        <th scope="col">Uang Masuk</th>
+                                        <th scope="col">Uang Keluar</th>
+                                        <th scope="col">Total Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $i=1;
+                                        foreach ($tahunan as $key => $value) {
+                                    ?>       
+                                    <tr>
+                                        <th scope="row"> <?= $i++ ?></th>
+                                        <td><?= $value['pembayaran_tanggal']?></td>
+                                        <td>Rp. <?= number_format($value['uang_masuk'],0,',','.');?></td>
+                                        <td>Rp. <?= number_format($value['uang_keluar'],0,',','.');?></td>
+                                        <td>Rp. <?php
+                                            $tot = $value['uang_masuk'] - $value['uang_keluar'] ;
+                                            echo number_format($tot,0,',','.');
+                                        ?></td>
                                         
                                      
                                         
@@ -113,7 +198,7 @@
 <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
 <script type="text/javascript">
             $(document).ready(function() {
-              $('#table_data_arisan').DataTable();
+              $('.table_data_arisan').DataTable();
             });
 </script>
 <script>

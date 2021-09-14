@@ -11,7 +11,6 @@
 <body>
   
 <div class="container">
-   
     <form method="POST" action="<?php echo base_url() ?>C_rekap_penerima/simpan_foto">
         <div class="row">
             <div class="col-md-6">

@@ -27,7 +27,7 @@
                                             <h4>Uang Arisan</h4>
                                         </div>
                                         <div class="prc-list">
-                                            <H2>Rp. <?= number_format($uang_arisan[0]['uang_arisan'],0,',','.') ?></H2>
+                                            <H2>Rp. <?php $total_uang_arisan = $uang_arisan[0]['uang_arisan'] - $uang_arisan_kurang[0]['uang_arisan_kurang'] ;echo $total_uang_arisan; ?></H2>
                                             <a href="<?php echo base_url() ?>C_keuangan/detail_uang_arisan">Detail</a>
                                         </div>
                                     </div>

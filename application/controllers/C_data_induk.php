@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class C_data_induk extends CI_Controller {
 	public function index()
 	{
-        $query_data = $this->db->query("SELECT * FROM tb_data_induk ");
+        $query_data = $this->db->query("SELECT * FROM tb_data_induk WHERE status = 1 ");
         $data['data_arisan'] = $query_data->result_array();
 		$this->load->view('template/header');
 		$this->load->view('template/sidebar');
@@ -71,6 +71,7 @@ class C_data_induk extends CI_Controller {
 				'id_induk' 				=> $id_induk,
 				'pembayaran_jumlah' 	=> '0',
 				'pembayaran_tanggal' 	=> $pembayaran_tanggal,
+				'pengeluaran' 			=> '0',
 				'status' 				=> 'Tidak Bayar'
 			  );
 		}else {
@@ -78,6 +79,7 @@ class C_data_induk extends CI_Controller {
 				'id_induk' 				=> $id_induk,
 				'pembayaran_jumlah' 	=> $bayar_jumlah1,
 				'pembayaran_tanggal' 	=> $pembayaran_tanggal,
+				'pengeluaran' 			=> '0',
 				'status' 				=> 'Bayar'
 			  );
 		}

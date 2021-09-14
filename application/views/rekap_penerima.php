@@ -56,7 +56,7 @@
                                         ?></td>
                                         <td>
                                             <?php 
-                                            if ($value['type_penerimaan'] == 0) {?>
+                                            if ($value['type_penerimaan'] == 2) {?>
                                                 <button type="button" class="btn btn-sm btn-flat btn-warning mb-3" onClick="detail_tengah(<?php echo $value['id_induk'] ?>,<?php echo $value['total_pembayaran'] ?>)" title="Detail" data-toggle="modal" data-target=".bd-example-modal-lg-detail"><i class="fa fa-info"></i></button>
                                             <?php }else{ ?>
                                                 <button type="button" class="btn btn-sm btn-flat btn-warning mb-3" onClick="detail_ab(<?php echo $value['id_induk'] ?>,<?php echo $value['total_pembayaran'] ?>)" title="Detail" data-toggle="modal" data-target=".bd-example-modal-lg-detail1"><i class="fa fa-info"></i></button>
@@ -66,8 +66,8 @@
                                             $tgl1 = $value['tanggal_pembukaan'];// pendefinisian tanggal awal
                                             $tgl2 = date('Y-m-d', strtotime('+99 days', strtotime($tgl1))); //operasi penjumlahan tanggal sebanyak 6 hari
                                             $tgl_skrng = date("Y-m-d");
-                                            if ($tgl2 <= $tgl_skrng) {?>
-                                                <button type="button" class="btn btn-sm btn-flat btn-info mb-3" title="Bayarkan" data-toggle="modal" data-target=".bd-example-modal-lg-penerima"><i class="fa fa-money"></i></button>     
+                                            if ($tgl2 <= $tgl_skrng && $value['status'] != 2) {?>
+                                                <button type="button" class="btn btn-sm btn-flat btn-info mb-3" title="Bayarkan" onClick="penerima(<?php echo $value['id_induk'] ?>,<?php echo $value['total_pembayaran'] ?>)" data-toggle="modal" data-target=".bd-example-modal-lg-penerima"><i class="fa fa-money"></i></button>     
                                             <?php } ?>
                                         </td>
                                     </tr>
@@ -124,21 +124,19 @@
             <div class="modal fade bd-example-modal-lg-penerima">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <form>
+                        <form method="POST" action="<?php echo base_url() ?>C_rekap_penerima/tompo_user">
+                            <input type="hidden" id="id_induk" name="id_induk">
                             <div class="modal-header">
                                 <h5 class="modal-title">Modal Penerima</h5>
                                 <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                             </div>
-                            <div class="modal-body">
-                                <h6 style="color:green">Yang sudah dibayar :</h6> <span style="color:green">Rp 30.000</span><br><br>
-                                <h6 style="color:red">Bolong :</h6><span style="color:red">Rp 300.000</span><br><br>
-                                <h6 style="color:red">Potongan :</h6><span style="color:red">Rp 2.000.000</span><br><br>
-                                <h6 style="color:green">Menerima :</h6><span style="color:green">Rp 3.000.000</span>
+                            <div id="modal_penerima" class="modal-body">
+                               
                                 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                <a href="<?php echo base_url() ?>C_rekap_penerima/take_foto"><button type="button" class="btn btn-primary">Bayarkan & Foto Bukti</button></a>
+                                <button type="submit" class="btn btn-primary">Bayarkan & Foto Bukti</button>
                             </div>
                         </form>
                     </div>
@@ -171,6 +169,16 @@
           data: "id_induk=" +id_induk+"&type=" +type,
           success:function(data){
             $('#body_detail_tengah').html(data);
+          }
+        })
+      } 
+      function penerima(id_induk,pembayaran){
+        $("#id_induk").val(id_induk);
+        $.ajax({
+          url : "<?php echo base_url('c_rekap_penerima/modal_penerima') ?>",
+          data: "id_induk=" +id_induk+"&type=" +type,
+          success:function(data){
+            $('#modal_penerima').html(data);
           }
         })
       } 
