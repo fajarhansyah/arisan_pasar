@@ -21,6 +21,7 @@
                             <li><a href="<?php echo base_url() ?>"><i class="ti-archive"></i> <span>Data Arisan</span></a></li>
                             <li><a href="<?php echo base_url() ?>C_rekap_penerima"><i class="ti-book"></i> <span>Rekap penerima uang</span></a></li>                           
                             <li><a href="<?php echo base_url() ?>C_keuangan"><i class="ti-money"></i> <span>Keuangan</span></a></li>                           
+                            <li><a href="<?php echo base_url() ?>C_scan_cepat"><i class="ti-money"></i> <span>Scan </span></a></li>                           
                         </ul>
                     </nav>
                 </div>

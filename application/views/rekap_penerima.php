@@ -27,7 +27,7 @@
                                     ?>       
                                     <tr>
                                         <th scope="row"> <?= $i++ ?></th>
-                                        <td><?= $value['nama']?></td>
+                                        <td><?= $value['nama_pelanggan']?></td>
                                         <td>Rp. <?= number_format($value['total_penerimaan'],0,',','.');?></td>
                                         <td><?php
                                         $tgl1 = $value['tanggal_pembukaan'];// pendefinisian tanggal awal

@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/assets/css/default-css.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/assets/css/styles.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/assets/css/responsive.css">
+    
     <!-- modernizr css -->
     <script src="<?php echo base_url() ?>assets/assets/js/vendor/modernizr-2.8.3.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet">

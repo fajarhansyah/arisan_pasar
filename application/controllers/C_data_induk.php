@@ -4,23 +4,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class C_data_induk extends CI_Controller {
 	public function index()
 	{
-        $query_data = $this->db->query("SELECT * FROM tb_data_induk WHERE status = 1 ");
+        $query_data = $this->db->query("SELECT * FROM tb_data_induk LEFT JOIN tb_pelanggan ON tb_data_induk.`pelanggan_id` = tb_pelanggan.`pelanggan_id` WHERE status = 1 ");
         $data['data_arisan'] = $query_data->result_array();
+		$query_data_pelanggan = $this->db->query("SELECT * FROM tb_pelanggan");
+        $data['data_pelanggan'] = $query_data_pelanggan->result_array();
 		$this->load->view('template/header');
 		$this->load->view('template/sidebar');
 		$this->load->view('data_arisan',$data);
 		$this->load->view('template/footer');
 	}
 	function simpan_data_induk(){
+        $pelanggan_status=$this->input->post('pelanggan_status');
         $nama=$this->input->post('nama');
+        $nama_baru=$this->input->post('nama_baru');
         $pembayaran=$this->input->post('pembayaran');
+		$pembayaran_cn = preg_replace("/[^0-9]/", "", $pembayaran);
         $tp=$this->input->post('tipe_penerima');
 		$tanggal_pembukaan = date("Y-m-d");
-		$total_pembayaran = $pembayaran * 100;
+		$total_pembayaran = $pembayaran_cn * 100;
 		$potongan = $total_pembayaran * 2 / 100;
 		$total_penerimaan = $total_pembayaran - $potongan ;
 		$status = 1 ;
- 
+		$permitted_chars = '0123456789';
+		$shuffled = str_shuffle($permitted_chars);
         $this->load->library('ciqrcode'); //pemanggilan library QR CODE
  
         $config['cacheable']    = true; //boolean, the default is true
@@ -33,17 +39,23 @@ class C_data_induk extends CI_Controller {
         $config['white']        = array(70,130,180); // array, default is array(0,0,0)
         $this->ciqrcode->initialize($config);
  
-        $image_name=$nama.'.png'; //buat name dari qr code sesuai dengan nim
+        $image_name='QR_CODE'.$shuffled.$tanggal_pembukaan.'.png'; //buat name dari qr code sesuai dengan nim
  
-       
+       if ($pelanggan_status == 'baru') {
+		$data1 = array(
+			'nama_pelanggan' 	=> $nama_baru
+		  );
+		  $this->Model_crud->tambah_data($data1, 'tb_pelanggan');
+		  $insert_id1 = $this->db->insert_id();
+
 		$data = array(
-			'nama' 				=> $nama,
+			'pelanggan_id' 		=> $insert_id1,
 			'tanggal_pembukaan' => $tanggal_pembukaan,
 			'total_pembayaran' 	=> $total_pembayaran,
 			'potongan' 			=> $potongan,
 			'total_penerimaan' 	=> $total_penerimaan,
 			'qr_code' 			=> $image_name,
-			'pembayaran' 		=> $pembayaran,
+			'pembayaran' 		=> $pembayaran_cn,
 			'status' 			=> $status,
 			'type_penerimaan' 	=> $tp
 		  );
@@ -56,6 +68,29 @@ class C_data_induk extends CI_Controller {
 		  $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
 		  $this->session->set_flashdata('something', 'Pesan Terkirim');
 		 //simpan ke database
+	   }else{
+		$data = array(
+			'pelanggan_id' 		=> $nama,
+			'tanggal_pembukaan' => $tanggal_pembukaan,
+			'total_pembayaran' 	=> $total_pembayaran,
+			'potongan' 			=> $potongan,
+			'total_penerimaan' 	=> $total_penerimaan,
+			'qr_code' 			=> $image_name,
+			'pembayaran' 		=> $pembayaran_cn,
+			'status' 			=> $status,
+			'type_penerimaan' 	=> $tp
+		  );
+		  $this->Model_crud->tambah_data($data, 'tb_data_induk');
+		  $insert_id = $this->db->insert_id();
+		  $params['data'] = base_url('').'C_data_induk/hasil_scan_qr/'.$insert_id; //data yang akan di jadikan QR CODE
+		  $params['level'] = 'H'; //H=High
+		  $params['size'] = 10;
+		  $params['savename'] = FCPATH.$config['imagedir'].$image_name; //simpan image QR CODE ke folder assets/images/
+		  $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+		  $this->session->set_flashdata('something', 'Pesan Terkirim');
+		 //simpan ke database
+	   }
+	//    die();
         redirect('C_data_induk'); //redirect ke mahasiswa usai simpan data
     }
 	function simpan_data_pembayaran(){
@@ -92,7 +127,7 @@ class C_data_induk extends CI_Controller {
 	public function edit()
 	{
 		$id_induk = $_GET['id_induk'];
-		$query_data = $this->db->query("SELECT * FROM tb_data_induk WHERE id_induk = $id_induk");
+		$query_data = $this->db->query("SELECT * FROM tb_data_induk LEFT JOIN tb_pelanggan ON tb_data_induk.`pelanggan_id` = tb_pelanggan.`pelanggan_id`  WHERE id_induk = $id_induk");
         $data['data_arisan'] = $query_data->result_array(); ?>
 			<!-- basic form start -->
 			<div class="col-12">
@@ -100,8 +135,8 @@ class C_data_induk extends CI_Controller {
 					<div class="card-body">
 						<div class="form-group">
 							<label for="exampleInputnama">Nama</label>
-							<input type="text" class="form-control" id="exampleInputnama" name="nama" value="<?= $data['data_arisan'][0]['nama']?>" placeholder="Masukkan Nama">
-							<input type="hidden"  name="id_induk" value="<?= $data['data_arisan'][0]['id_induk']?>">
+							<input type="text" class="form-control" id="exampleInputnama" name="nama" value="<?= $data['data_arisan'][0]['nama_pelanggan']?>" placeholder="Masukkan Nama" readonly>
+							<input type="text"  name="id_induk" value="<?= $data['data_arisan'][0]['pelanggan_id']?>">
 						</div>
 						<div class="form-group">
 							<label for="exampleInputpembayran">Pembayaran</label>
@@ -109,10 +144,10 @@ class C_data_induk extends CI_Controller {
 						</div>
 						<div class="form-group">
 							<label class="col-form-label">Tipe pemerimaan</label>
-							<select class="form-control" name="tipe_penerima" required>
-								<option disabled selected>- Pilih -</option>
-								<option>Atas Bawah</option>
-								<option>Tengah</option>
+							<select class="form-control " name="tipe_penerima" required>
+									<option disabled selected>- Pilih -</option>
+									<option value="1">Atas Bawah</option>
+									<option value="2">Tengah</option>
 							</select>
 						</div>
 					</div>
@@ -195,15 +230,52 @@ class C_data_induk extends CI_Controller {
 	}
 	public function hasil_scan_qr($id)
 	{
-        $query_data = $this->db->query("SELECT * FROM tb_data_induk WHERE id_induk = $id");
+        $query_data_pembayaran = $this->db->query("SELECT * FROM tb_pembayaran WHERE id_induk = $id");
+        $data['data_pembayaran'] = $query_data_pembayaran->result_array();
+        $query_data = $this->db->query("SELECT * FROM tb_data_induk LEFT JOIN tb_pelanggan ON tb_data_induk.`pelanggan_id` = tb_pelanggan.`pelanggan_id`  WHERE id_induk = $id");
         $data['data_arisan'] = $query_data->result_array();
 		$this->load->view('template/header');
 		$this->load->view('template/sidebar');
 		$this->load->view('hp_data_arisan',$data);
 		$this->load->view('template/footer');
 	}
+	public function pembayaran_hp()
+	{
+			$pembayaran_tanggal		=$this->input->post('tanggal');
+			$id_induk				=$this->input->post('id_induk');
+			$pembayaran_jumlah		=$this->input->post('pembayaran_jumlah');
+			$status 				=$this->input->post('status');
+			if ($status == 'tidak_bayar') {
+				$data = array(
+					'id_induk' 				=> $id_induk,
+					'pembayaran_jumlah' 	=> '0',
+					'pembayaran_tanggal' 	=> $pembayaran_tanggal,
+					'pengeluaran' 			=> '0',
+					'status' 				=> 'Tidak Bayar'
+				  );
+			}else {
+				$data = array(
+					'id_induk' 				=> $id_induk,
+					'pembayaran_jumlah' 	=> $pembayaran_jumlah,
+					'pembayaran_tanggal' 	=> $pembayaran_tanggal,
+					'pengeluaran' 			=> '0',
+					'status' 				=> 'Bayar'
+				  );
+			}
+			
+			  $this->Model_crud->tambah_data($data, 'tb_pembayaran');
+			  $this->session->set_flashdata('something', 'Pesan Terkirim');
+			 //simpan ke database
+			 if ($status == 'tidak_bayar') {
+				redirect('C_data_induk/hasil_scan_qr/'.$id_induk); 
+			}else {
+				redirect('C_data_induk/cetak_pembayaran'); 
+			}
+		
+	}
 	public function cetak_pembayaran()
 	{
+
 		$this->load->view('cetak_struk_pembayaran');
 	}
 	public function modal_detail(){

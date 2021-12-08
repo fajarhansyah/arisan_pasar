@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class C_rekap_penerima extends CI_Controller {
 	public function index()
 	{
-        $query_data = $this->db->query("SELECT * FROM tb_data_induk");
+        $query_data = $this->db->query("SELECT * FROM tb_data_induk LEFT JOIN tb_pelanggan ON tb_data_induk.`pelanggan_id` = tb_pelanggan.`pelanggan_id`");
         $data['data_arisan'] = $query_data->result_array();
 		$this->load->view('template/header');
 		$this->load->view('template/sidebar');
@@ -37,7 +37,7 @@ class C_rekap_penerima extends CI_Controller {
         $data['data_arisan'] = $query_data->result_array();
         $query_data_pembayaran = $this->db->query("SELECT * FROM tb_pembayaran WHERE id_induk = $id_induk");
         $data['data_pembayaran'] = $query_data_pembayaran->result_array();
-		$tot_query_data_pembayaran = $this->db->query("SELECT SUM(pembayaran_jumlah) AS 'tot_pem' FROM tb_pembayaran WHERE id_induk = $id_induk");
+		$tot_query_data_pembayaran = $this->db->query("SELECT SUM(pembayaran_jumlah) AS 'tot_pem' FROM tb_pembayaran WHERE id_induk = $id_induk && status = 'Bayar'");
         $data['tot_data_pembayaran'] = $tot_query_data_pembayaran->result_array();
 		if ($type == 'tengah') {
 				$i=1;
@@ -91,7 +91,7 @@ class C_rekap_penerima extends CI_Controller {
 				foreach ($data['data_arisan'] as $key => $value1) {
 			?>     
 			<h6 style="color:green">Jumlah yang sudah dibayar :</h6> <span style="color:green">Rp. <?= number_format($data['tot_data_pembayaran'][0]['tot_pem'],0,',','.');?></span><br>
-			<h6 style="color:red">Jumlah yang belum dibayar 10 hari :</h6><span style="color:red">Rp. <?php $blm_byr = $value1['pembayaran'] * 10 - $data['tot_data_pembayaran'][0]['tot_pem'];echo number_format($blm_byr,0,',','.');?></span>
+			<h6 style="color:red">Jumlah yang belum dibayar 10 hari :</h6><span style="color:red">Rp. <?php $blm_byr = ($value1['pembayaran'] * 10) - $data['tot_data_pembayaran'][0]['tot_pem'] ;echo number_format($blm_byr,0,',','.');?></span>
 			<h6 style="color:red">Jumlah yang belum dibayar keseluruhan :</h6><span style="color:red">Rp. <?php $tot_blm_byr = $value1['total_pembayaran'] - $data['tot_data_pembayaran'][0]['tot_pem'];echo number_format($tot_blm_byr,0,',','.');?></span>
 			<h6 style="color:green">Jumlah Keseluruhan :</h6><span style="color:green">Rp. <?= number_format($value1['total_pembayaran'],0,',','.') ?></span>
 			<?php } ?>

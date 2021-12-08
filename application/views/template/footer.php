@@ -219,6 +219,7 @@
     <!-- others plugins -->
     <script src="<?php echo base_url() ?>assets/assets/js/plugins.js"></script>
     <script src="<?php echo base_url() ?>assets/assets/js/scripts.js"></script>
+    
 </body>
 
 </html>

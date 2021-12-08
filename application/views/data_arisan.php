@@ -31,7 +31,7 @@
                                     ?>       
                                     <tr>
                                         <th scope="row"> <?= $i++ ?></th>
-                                        <td><?= $value['nama']?></td>
+                                        <td><?= $value['nama_pelanggan']?></td>
                                         <td><?=  date('d/m/Y', strtotime($value['tanggal_pembukaan'])) ;?></td>
                                         <td>Rp. <?= number_format($value['pembayaran'],0,',','.');?></td>
                                         <td>Rp. <?= number_format($value['total_pembayaran'],0,',','.');?></td>
@@ -67,6 +67,11 @@
         </div>
     </div>
 <!-- Large modal start -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css" rel="stylesheet" />
 
             <div class="modal fade bd-example-modal-lg-tambah">
                 <div class="modal-dialog modal-lg">
@@ -82,21 +87,44 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="form-group">
-                                                <label for="exampleInputnama">Nama</label>
-                                                <input type="text" class="form-control" id="exampleInputnama"  name="nama" placeholder="Masukkan Nama">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleInputpembayaran">Pembayaran</label>
-                                                <input type="number" class="form-control" id="exampleInputpembayaran" name="pembayaran" placeholder="Masukkan pembayaran">
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-form-label">Tipe penerimaan</label>
-                                                <select class="form-control" name="tipe_penerima">
+                                                <label class="col-form-label">Pelanggan</label>
+                                                <select class="form-control selectpicker" id='pelanggan_status'name="pelanggan_status">
                                                     <option disabled selected>- Pilih -</option>
-                                                    <option value="1">Atas Bawah</option>
-                                                    <option value="2">Tengah</option>
+                                                    <option value="baru">Baru</option>
+                                                    <option value="lama">Lama</option>
                                                 </select>
                                             </div>
+                                            <div id='start_modal' style="display:none;">
+                                                <div class="form-group" id='pelanggan_baru' style="display:none;">
+                                                    <label for="exampleInputnama">Nama</label>
+                                                    <input type="text" class="form-control" id="exampleInputnama"  name="nama_baru" placeholder="Masukkan Nama" >
+                                                </div>
+                                                <div class="form-group" id='pelanggan_lama' style="display:none;">
+                                                    <label class="col-form-label">Nama</label>
+                                                    <select class="form-control selectpicker" id="select-country"  name="nama" data-live-search="true">
+                                                        <?php 
+                                                        foreach ($data_pelanggan as $key => $value) {
+                                                        ?>
+                                                            <option value="<?= $value['pelanggan_id']?>"><?= $value['nama_pelanggan']?></option>
+                                                        <?php
+                                                            } 
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleInputpembayaran">Pembayaran</label>
+                                                    <input type="text" class="form-control" id="rupiah" name="pembayaran" placeholder="Masukkan pembayaran">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-form-label">Tipe penerimaan</label>
+                                                    <select class="form-control selectpicker" name="tipe_penerima" >
+                                                        <option disabled selected>- Pilih -</option>
+                                                        <option value="1">Atas Bawah</option>
+                                                        <option value="2">Tengah</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -286,4 +314,43 @@ function bayar(id_induk,pembayaran)
         $('#hapus_id').val(id_induk);
 
       }   
+</script>
+<script>
+    $("#pelanggan_status").change(function () {
+        var status = this.value;
+        $( "#start_modal" ).show("slow");
+        if (status == 'baru') {
+            $( "#pelanggan_baru" ).show(); 
+            $( "#pelanggan_lama" ).hide(); 
+        }else{
+            $( "#pelanggan_lama" ).show();
+            $( "#pelanggan_baru" ).hide();
+        }
+    });
+</script>
+<script>
+var rupiah = document.getElementById("rupiah");
+rupiah.addEventListener("keyup", function(e) {
+  // tambahkan 'Rp.' pada saat form di ketik
+  // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+  rupiah.value = formatRupiah(this.value, "Rp. ");
+});
+
+/* Fungsi formatRupiah */
+function formatRupiah(angka, prefix) {
+  var number_string = angka.replace(/[^,\d]/g, "").toString(),
+    split = number_string.split(","),
+    sisa = split[0].length % 3,
+    rupiah = split[0].substr(0, sisa),
+    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+  // tambahkan titik jika yang di input sudah menjadi angka ribuan
+  if (ribuan) {
+    separator = sisa ? "." : "";
+    rupiah += separator + ribuan.join(".");
+  }
+
+  rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+  return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+}
 </script>
